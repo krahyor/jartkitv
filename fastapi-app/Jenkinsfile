@@ -28,7 +28,7 @@ pipeline {
 
         stage('Run Tests & Coverage') {
             steps {
-                sh './venv/bin/pytest --cov=app fastapi-app/tests/ --maxfail=1 --disable-warnings -q'
+                sh './venv/bin/pytest fastapi-app/tests/ --maxfail=1 --disable-warnings -q'
             }
         }
 
