@@ -46,7 +46,8 @@ pipeline {
                                     -Dsonar.projectKey=fastapi-jenkins \
                                     -Dsonar.sources=fastapi-app \
                                     -Dsonar.host.url=http://172.17.0.1:9001 \
-                                    -Dsonar.login=$SONARQUBE
+                                    -Dsonar.login=$SONARQUBE \
+                                    -Dsonar.branch.name=lab
                             '''
                         }
                     }
