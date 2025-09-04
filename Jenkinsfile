@@ -44,7 +44,7 @@ pipeline {
                             sh '''
                                 sonar-scanner \
                                     -Dsonar.projectKey=fastapi-jenkins \
-                                    -Dsonar.sources=fastapi-app \
+                                    -Dsonar.sources=app \
                                     -Dsonar.host.url=http://172.17.0.1:9001 \
                                     -Dsonar.login=$SONARQUBE \
                                     -Dsonar.python.coverage.reportPaths=coverage.xml
