@@ -38,13 +38,14 @@ pipeline {
             steps {
                 script {
                     // ใช้ SonarScanner CLI Docker image (Linux compatible)
+                    // -Dsonar.host.url=http://172.17.0.1:9001 <--- command check : ip addr show docker0
                     docker.image('sonarsource/sonar-scanner-cli').inside {
                         withSonarQubeEnv('sonarqube-7.2') {
                             sh '''
                                 sonar-scanner \
                                     -Dsonar.projectKey=fastapi-jenkins \
                                     -Dsonar.sources=fastapi-app \
-                                    -Dsonar.host.url=http://sonarqube:9001 \
+                                    -Dsonar.host.url=http://172.17.0.1:9001 \
                                     -Dsonar.login=$SONARQUBE
                             '''
                         }
