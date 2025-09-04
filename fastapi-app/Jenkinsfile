@@ -23,6 +23,7 @@ pipeline {
                 sh './venv/bin/pip install --no-cache-dir --upgrade pip'
                 sh './venv/bin/pip install --no-cache-dir -r ./fastapi-app/requirements.txt'
                 sh './venv/bin/pip install --no-cache-dir coverage'
+                sh './venv/bin/pip install --no-cache-dir sonar-qube-scanner'
             }
         }
 
@@ -34,12 +35,8 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                sh 'apt-get update && apt-get install -y wget unzip'
-                sh 'wget -O /tmp/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip'
-                sh 'unzip -o /tmp/sonar-scanner.zip -d /opt/'
-                sh 'export PATH=$PATH:/opt/sonar-scanner-5.0.1.3006-linux/bin'
                 withSonarQubeEnv('sonarqube-7.2') {
-                    sh '/opt/sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner'
+                    sh './venv/bin/sonar-qube-scanner'
                 }
             }
         }
