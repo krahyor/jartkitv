@@ -36,7 +36,6 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar-token') {
                     sh '''
-                        apt-get update && apt-get install -y sonar-scanner
                         sonar-scanner
                     '''
                 }
