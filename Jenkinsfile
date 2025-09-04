@@ -25,7 +25,7 @@ pipeline {
                 // ติดตั้ง dependencies
                 sh 'python3.11 -m venv venv'
                 sh './venv/bin/pip install --no-cache-dir --upgrade pip'
-                sh './venv/bin/pip install --no-cache-dir -r /requirements.txt'
+                sh './venv/bin/pip install --no-cache-dir -r requirements.txt'
                 sh './venv/bin/pip install --no-cache-dir coverage'
                 
                 // รัน unit test และ generate coverage report (coverage.xml สำหรับ SonarQube)
