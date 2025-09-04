@@ -36,10 +36,8 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar-token') {
                     sh '''
-                        apt-get update && apt-get install -y wget unzip
-                        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux.zip
-                        unzip -o sonar-scanner-cli-*.zip -d /opt
-                        /opt/sonar-scanner-*/bin/sonar-scanner
+                        apt-get update && apt-get install -y sonar-scanner
+                        sonar-scanner
                     '''
                 }
             }
