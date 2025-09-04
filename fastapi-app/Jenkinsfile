@@ -26,7 +26,7 @@ pipeline {
                 sh 'python3.11 -m venv venv'
                 sh './venv/bin/pip install --no-cache-dir --upgrade pip'
                 sh './venv/bin/pip install --no-cache-dir -r ./fastapi-app/requirements.txt'
-                sh './venv/bin/pip install --no-cache-dir sonar-scan coverage'
+                sh './venv/bin/pip install --no-cache-dir coverage'
                 
                 // รัน unit test และ generate coverage report
                 sh 'PYTHONPATH=. ./venv/bin/pytest --cov=app tests/ --cov-report=xml:coverage.xml'
