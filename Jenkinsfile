@@ -62,18 +62,16 @@ pipeline {
 
         stage('Deploy Container') {
             steps {
-                // stop & remove container เดิมถ้ามี
-                sh 'docker stop fastapi-app || true'
-                sh 'docker rm fastapi-app || true'
-
-                // รัน container ใหม่
+                // stop & remove container ถ้ามีอยู่
                 sh '''
-                    docker run -d \
-                        --name app \
-                        -p 8000:8000 \
-                        fastapi-app:latest \
-                        uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+                if [ $(docker ps -aq -f name=app) ]; then
+                    docker stop app
+                    docker rm app
+                fi
                 '''
+
+                // run container ใหม่
+                sh 'docker run -d --name app -p 8000:8000 fastapi-app:latest uvicorn app.main:app --reload --host 0.0.0.0 --port 8000'
             }
         }
     }
