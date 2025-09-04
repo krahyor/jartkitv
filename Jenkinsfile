@@ -25,11 +25,11 @@ pipeline {
                 // ติดตั้ง dependencies
                 sh 'python3.11 -m venv venv'
                 sh './venv/bin/pip install --no-cache-dir --upgrade pip'
-                sh './venv/bin/pip install --no-cache-dir -r ./fastapi-app/requirements.txt'
+                sh './venv/bin/pip install --no-cache-dir -r /requirements.txt'
                 sh './venv/bin/pip install --no-cache-dir coverage'
                 
                 // รัน unit test และ generate coverage report (coverage.xml สำหรับ SonarQube)
-                sh 'PYTHONPATH=. ./venv/bin/coverage run -m pytest fastapi-app/tests/ --maxfail=1 --disable-warnings -q'
+                sh 'PYTHONPATH=. ./venv/bin/coverage run -m pytest tests --maxfail=1 --disable-warnings -q'
                 sh './venv/bin/coverage xml'
             }
         }
