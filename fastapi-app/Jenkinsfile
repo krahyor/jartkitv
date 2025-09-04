@@ -1,47 +1,50 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.11'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any  // ใช้ Jenkins node ที่มี Docker CLI
 
     environment {
-        SONARQUBE = credentials('sonar-token')
+        SONARQUBE = credentials('sonar-token')   // Jenkins Credentials สำหรับ SonarQube token
     }
 
     stages {
+
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/krahyor/jartkitv.git'
+                git branch: 'main', url: 'https://github.com/kornphongP/FastAPI_Jenkins_Sonarqube.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install Dependencies & Run Tests') {
+            agent {
+                docker {
+                    image 'python:3.11'
+                    args '-u root:root -v /var/run/docker.sock:/var/run/docker.sock'  // รันเป็น root + DinD
+                }
+            }
             steps {
+                // ติดตั้ง dependencies
                 sh 'python3.11 -m venv venv'
                 sh './venv/bin/pip install --no-cache-dir --upgrade pip'
                 sh './venv/bin/pip install --no-cache-dir -r ./fastapi-app/requirements.txt'
-                sh './venv/bin/pip install --no-cache-dir pysonar coverage'
-            }
-        }
-
-        stage('Run Tests & Coverage') {
-            steps {
-                sh './venv/bin/pytest fastapi-app/tests/ --maxfail=1 --disable-warnings -q'
+                sh './venv/bin/pip install --no-cache-dir sonar-scan coverage'
+                
+                // รัน unit test และ generate coverage report
+                sh 'PYTHONPATH=. ./venv/bin/pytest --cov=app tests/ --cov-report=xml:coverage.xml'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonar-token') {
-                    sh '''
-                        export SONAR_TOKEN=$SONARQUBE
-                        apt-get update && apt-get install -y wget unzip
-                        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux.zip
-                        unzip -o sonar-scanner-cli-6.2.1.4610-linux.zip -d /opt
-                        /opt/sonar-scanner-6.2.1.4610-linux/bin/sonar-scanner
-                    '''
+                script {
+                    // ใช้ SonarScanner container แยกออกจาก Python container
+                    docker.image('sonarsource/sonar-scanner-cli').inside {
+                        sh """
+                            sonar-scanner \
+                                -Dsonar.projectKey=fastapi-jenkins \
+                                -Dsonar.sources=app \
+                                -Dsonar.host.url=http://sonarqube:9001 \
+                                -Dsonar.login=${SONARQUBE} \
+                        """
+                    }
                 }
             }
         }
@@ -54,14 +57,25 @@ pipeline {
 
         stage('Deploy Container') {
             steps {
-                sh 'docker run -d -p 8000:8000 fastapi-app:latest'
+                // stop & remove container เดิมถ้ามี
+                sh 'docker stop fastapi-app || true'
+                sh 'docker rm fastapi-app || true'
+
+                // รัน container ใหม่
+                sh '''
+                    docker run -d \
+                        --name fastapi-app \
+                        -p 8000:8000 \
+                        fastapi-app:latest \
+                        uvicorn app.main:app --host 0.0.0.0 --port 8000
+                '''
             }
         }
     }
 
     post {
         always {
-            echo "Pipeline finished"
+            echo "✅ Pipeline finished"
         }
     }
 }
