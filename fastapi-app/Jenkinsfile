@@ -8,29 +8,19 @@ pipeline {
             }
         }
 
-        stage('Setup Python venv') {
+        stage('Run Tests in venv') {
+            agent {
+                docker { image 'python:3.11' }
+            }
             steps {
                 sh '''
-                    python3.11 -m venv venv
+                    python -m venv venv
                     . venv/bin/activate
                     pip install --upgrade pip
                     pip install -r requirements.txt
                     pip install sonar-scanner coverage
-                '''
-            }
-        }
-
-        stage('Run Tests & Coverage') {
-            steps {
-                sh '''
-                    . venv/bin/activate
                     pytest --cov=app tests/
                 '''
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
                 withSonarQubeEnv('sonarqube-7.2') {
                     sh '''
                         . venv/bin/activate
@@ -48,16 +38,9 @@ pipeline {
 
         stage('Deploy Container') {
             steps {
-                // Stop old container if running
                 sh 'docker rm -f fastapi-app || true'
                 sh 'docker run -d --name fastapi-app -p 8000:8000 fastapi-app:latest'
             }
-        }
-    }
-
-    post {
-        always {
-            echo "Pipeline finished"
         }
     }
 }
