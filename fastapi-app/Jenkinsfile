@@ -35,7 +35,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-token') {
-                    sh './venv/bin/pysonar -Dsonar.token=sqp_8bff657e802da296cc733aedfa3e0829b4170e39 -Dsonar.projectKey=fastapi-jenkins'
+                    sh './venv/bin/pysonar -Dsonar.projectKey=fastapi-jenkins'
                 }
             }
         }
