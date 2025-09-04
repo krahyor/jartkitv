@@ -22,13 +22,13 @@ pipeline {
                 sh 'python3.11 -m venv venv'
                 sh './venv/bin/pip install --no-cache-dir --upgrade pip'
                 sh './venv/bin/pip install --no-cache-dir -r ./fastapi-app/requirements.txt'
-                sh './venv/bin/pip install --no-cache-dir sonar-scanner coverage'
+                sh './venv/bin/pip install --no-cache-dir coverage'
             }
         }
 
         stage('Run Tests & Coverage') {
             steps {
-                sh 'pytest --cov=app tests/'
+                sh 'pytest fastapi-app/tests/ --maxfail=1 --disable-warnings -q '
             }
         }
 
