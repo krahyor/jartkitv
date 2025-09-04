@@ -39,14 +39,16 @@ pipeline {
                 script {
                     // ใช้ SonarScanner CLI Docker image (Linux compatible)
                     docker.image('sonarsource/sonar-scanner-cli').inside {
-                        sh """
-                            sonar-scanner \
-                                -Dsonar.projectKey=fastapi-jenkins \
-                                -Dsonar.sources=app \
-                                -Dsonar.python.coverage.reportPaths=coverage.xml \
-                                -Dsonar.host.url=http://sonarqube:9001 \
-                                -Dsonar.login=${SONARQUBE}
-                        """
+                        withSonarQubeEnv('sonar-token') {
+                            sh '''
+                                sonar-scanner \
+                                    -Dsonar.projectKey=fastapi-jenkins \
+                                    -Dsonar.sources=app \
+                                    -Dsonar.python.coverage.reportPaths=coverage.xml \
+                                    -Dsonar.host.url=http://localhost:9000 \
+                                    -Dsonar.login=$SONARQUBE
+                            '''
+                        }
                     }
                 }
             }
