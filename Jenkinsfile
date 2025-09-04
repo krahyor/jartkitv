@@ -47,7 +47,6 @@ pipeline {
                                     -Dsonar.sources=app \
                                     -Dsonar.host.url=http://172.17.0.1:9001 \
                                     -Dsonar.login=$SONARQUBE \
-                                    -Dsonar.branch.name=lab
                             '''
                         }
                     }
