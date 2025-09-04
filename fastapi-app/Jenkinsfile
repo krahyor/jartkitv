@@ -34,7 +34,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube-7.2') {
+                withSonarQubeEnv('sonar-token') {
                     sh '''
                     apt-get update && apt-get install -y wget unzip
                     wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux.zip
