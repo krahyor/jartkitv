@@ -46,14 +46,21 @@ pipeline {
                                     -Dsonar.projectKey=fastapi-jenkins \
                                     -Dsonar.sources=fastapi-app \
                                     -Dsonar.host.url=http://172.17.0.1:9001 \
-                                    -Dsonar.login=$SONARQUBE
+                                    -Dsonar.login=$SONARQUBE \
+                                    -Dsonar.python.coverage.reportPaths=coverage.xml
                             '''
                         }
                     }
                 }
             }
         }
-
+        stage("SonarQube Quality Gate") {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t fastapi-app:latest .'
