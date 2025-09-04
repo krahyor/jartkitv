@@ -35,7 +35,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-token') {
-                    sh './venv/bin/python -m pip install sonar-scanner-cli'
+                    sh './venv/bin/pip install --no-cache-dir sonar-scanner-cli'
                     sh 'sonar-scanner'
                 }
             }
