@@ -39,7 +39,7 @@ pipeline {
                 script {
                     // ใช้ SonarScanner CLI Docker image (Linux compatible)
                     docker.image('sonarsource/sonar-scanner-cli').inside {
-                        withSonarQubeEnv('sonar-token') {
+                        withSonarQubeEnv('sonarqube-7.2') {
                             sh '''
                                 sonar-scanner \
                                     -Dsonar.projectKey=fastapi-jenkins \
