@@ -22,7 +22,7 @@ pipeline {
                 sh 'python3.11 -m venv venv'
                 sh './venv/bin/pip install --no-cache-dir --upgrade pip'
                 sh './venv/bin/pip install --no-cache-dir -r ./fastapi-app/requirements.txt'
-                sh './venv/bin/pip install --no-cache-dir coverage'
+                sh './venv/bin/pip install --no-cache-dir pysonar coverage'
             }
         }
 
@@ -35,14 +35,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-token') {
-                    sh './venv/bin/pip install --no-cache-dir pysonar'
-                    sh '''
-                        ./venv/bin/pysonar \
-                            -Dsonar.projectKey=fastapi-jenkins \
-                            -Dsonar.sources=./fastapi-app \
-                            -Dsonar.host.url=http://sonarqube:9001 \
-                            -Dsonar.login=$SONARQUBE
-                    '''
+                    sh './venv/bin/pysonar -Dsonar.token=sqp_8bff657e802da296cc733aedfa3e0829b4170e39 -Dsonar.projectKey=fastapi-jenkins'
                 }
             }
         }
