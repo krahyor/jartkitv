@@ -36,7 +36,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('sonar-token') {
                     sh './venv/bin/pip install --no-cache-dir pysonar'
-                    sh './venv/bin/pysonar --source=./fastapi-app --tests=./fastapi-app/tests --sonar.projectKey=fastapi-app --sonar.host.url=$SONAR_HOST_URL --sonar.login=$SONAR_AUTH_TOKEN'
+                    sh './venv/bin/pysonar --sonar.projectKey=fastapi-jenkins'
                 }
             }
         }
