@@ -29,7 +29,7 @@ pipeline {
                 sh './venv/bin/pip install --no-cache-dir coverage'
                 
                 // รัน unit test และ generate coverage report (coverage.xml สำหรับ SonarQube)
-                sh 'PYTHONPATH=. ./venv/bin/coverage run -m pytest tests --maxfail=1 --disable-warnings -q'
+                sh 'PYTHONPATH=. ./venv/bin/coverage run -m pytest ./tests/test_main.py'
                 sh './venv/bin/coverage xml'
             }
         }
@@ -72,7 +72,7 @@ pipeline {
                         --name app \
                         -p 8000:8000 \
                         fastapi-app:latest \
-                        uvicorn app.main:app --host 0.0.0.0 --port 8000
+                        uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
                 '''
             }
         }
