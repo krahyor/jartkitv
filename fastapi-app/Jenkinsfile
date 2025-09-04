@@ -23,7 +23,7 @@ pipeline {
                 sh '. ./venv/bin/activate'
                 sh 'pip install --upgrade pip'
                 sh 'pip install -r requirements.txt'
-                sh 'pip install sonar-scanner coverage'
+                // sh 'pip install sonar-scanner coverage'
             }
         }
 
