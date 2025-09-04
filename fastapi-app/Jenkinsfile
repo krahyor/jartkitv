@@ -28,22 +28,24 @@ pipeline {
                 sh './venv/bin/pip install --no-cache-dir -r ./fastapi-app/requirements.txt'
                 sh './venv/bin/pip install --no-cache-dir coverage'
                 
-                // รัน unit test และ generate coverage report
-                sh 'PYTHONPATH=. ./venv/bin/pytest fastapi-app/tests/ --maxfail=1 --disable-warnings -q'
+                // รัน unit test และ generate coverage report (coverage.xml สำหรับ SonarQube)
+                sh 'PYTHONPATH=. ./venv/bin/coverage run -m pytest fastapi-app/tests/ --maxfail=1 --disable-warnings -q'
+                sh './venv/bin/coverage xml'
             }
         }
 
         stage('SonarQube Analysis') {
             steps {
                 script {
-                    // ใช้ SonarScanner container แยกออกจาก Python container
+                    // ใช้ SonarScanner CLI Docker image (Linux compatible)
                     docker.image('sonarsource/sonar-scanner-cli').inside {
                         sh """
                             sonar-scanner \
                                 -Dsonar.projectKey=fastapi-jenkins \
                                 -Dsonar.sources=app \
-                                -Dsonar.host.url=http://host.docker.internal:9001 \
-                                -Dsonar.login=${SONARQUBE} \
+                                -Dsonar.python.coverage.reportPaths=coverage.xml \
+                                -Dsonar.host.url=http://sonarqube:9001 \
+                                -Dsonar.login=${SONARQUBE}
                         """
                     }
                 }
