@@ -35,13 +35,7 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonar-token') {
-                    sh '''
-                    apt-get update && apt-get install -y wget unzip
-                    wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-6.2.1.4610-linux.zip
-                    unzip sonar-scanner-cli-*.zip -d /opt
-                    export PATH=$PATH:/opt/sonar-scanner-*/bin
-                    sonar-scanner
-                    '''
+                    sh 'sonar-scanner'
                 }
             }
         }
