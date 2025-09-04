@@ -1,3 +1,4 @@
+
 pipeline {
     agent any  // ใช้ Jenkins node ที่มี Docker CLI
 
@@ -9,7 +10,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/kornphongP/FastAPI_Jenkins_Sonarqube.git'
+                git branch: 'main', url: 'https://github.com/krahyor/jartkitv.git'
             }
         }
 
